@@ -1,5 +1,6 @@
 import sys
 import os
+from flitsr import print_table
 from output import find_faults
 from merge_equiv import merge_on_row, remove_from_table
 from split_faults import split
@@ -105,10 +106,12 @@ def fill_table(tests, num_tests, locs, f, method_map):
 def read_table(file_loc, split_faults, method_level=False):
     table = None
     tests = None
+    #counts={}
     num_locs = 0
     num_tests = 0
     details = None
     method_map = None
+    #test_map= {}
     groups = None
     file = open(file_loc)
     while (True):

@@ -457,7 +457,7 @@ def main(argv):
                             ('p', "f"), ('r', 1), ('r', 5), ('r', 10), ('r', "f")],
                             collapse=collapse, file=file)
                 else:
-                    sort = run(table, counts, metrics[m], i>=1, 3, (i==2)*2)
+                    sort = run(table, counts, metric, i>=1, 3, (i==2)*2)
                     output(sort, details, groups, weff=["first", "avg", "med", "last"],
                             perc_at_n=True,prec_rec=[('p', 1), ('p', 5), ('p', 10),
                             ('p', "f"), ('r', 1), ('r', 5), ('r', 10), ('r', "f")],
