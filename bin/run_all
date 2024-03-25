@@ -44,10 +44,11 @@ for proj in *; do
     #if [ ! -f "results" ]; then
       if [ "$1" = "tcm" ]; then
         for file in *.txt; do
-          run_with_lock flitsr "$file" all;
+          run_with_lock $(python3 /home/angela/Desktop/FLITSR/flitsr/flitsr  "$file" all;)
         done
       else
-        for file in */; do run_with_lock flitsr "${file%/}" all; done
+        for file in */; do run_with_lock $(python3 /home/angela/Desktop/FLITSR/flitsr/flitsr  "${file%/}" all;)
+        done
       fi
       wait
       for m in $metrics; do
@@ -63,7 +64,7 @@ for proj in *; do
           done > "$t${m}.results"
         done
       done
-      merge > results
+      python3 /home/angela/Desktop/FLITSR/flitsr/flitsr/merge.py > results
       #echo "Done in $dir"
       #if [ $1 = "tcm" ]; then
         #merge rel > results_rel
