@@ -32,7 +32,7 @@ else
   dir_type=*/
   echo "gzoltar"
 fi
-metrics=$(python3 /home/angela/Desktop/FLITSR/flitsr/flitsr/get_metric_names.py)
+metrics=$(python3 -m flitsr.get_metric_names)
 #metrics="barinel"
 
 for proj in *; do

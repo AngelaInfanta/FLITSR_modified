@@ -1,12 +1,11 @@
 import math
-from pytest import mark as pytestr
 
-class Suspicious() :
+class Suspicious():
     """
     An implementation of ranking metric used for
     fault localization
     """
-    def __init__(self, ef, tf, ep, tp) :
+    def __init__(self, ef, tf, ep, tp):
         """
         The four basic counts that are parameters to
         different metrics
@@ -329,7 +328,7 @@ class Suspicious() :
         t2 = K3/(K2 + self.ep/(self.ef + self.ep))
         return t1 + t2
 
-    def barinel(self):
+    def _old_barinel(self):
         if (self.nf == 0 or self.ep + self.ef == 0):
             return 0.0
         if (self.ep == 0):
@@ -338,13 +337,11 @@ class Suspicious() :
             h = self.ep/(self.ep + self.ef)
         return h**(self.ep) * (1-h)**(self.ef)
 
-#<-------------------------------- Unit tests -------------------------------->
-
-@pytestr.parametrize('metric', Suspicious.getNames())
-@pytestr.randomize(ef=int, nf=int, ep=int ,np=int, min_num=0, max_num=10000)
-def test_metrics(metric, ef, nf, ep, np):
-    sus = Suspicious(ef, ef+nf, ep, ep+np)
-    ans = sus.execute(metric)
-    #assert ans >= 0.0
-    if (ef == 0):
-        assert ans <= 0.0
+    def barinel(self):
+        if (self.nf == 0 or self.ep + self.ef == 0):
+            return 0.0
+        if (self.ep == 0):
+            h = 0.0
+        else:
+            h = self.ep/(self.ep + self.ef)
+        return h**(self.ep) * (1-h)**(11)

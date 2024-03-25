@@ -1,15 +1,15 @@
-import localize
+from flitsr import localize
 import sys
-import weffort
-import top
+from flitsr import weffort
+from flitsr import top
 import copy
-import percent_at_n
-import parallel
-import precision_recall
+from flitsr import percent_at_n
+from flitsr import parallel
+from flitsr import precision_recall
 from os import path as osp
-from output import print_names, find_faults, find_fault_groups
-from suspicious import Suspicious
-from cutoff_points import cutoff_points
+from flitsr.output import print_names, find_faults, find_fault_groups
+from flitsr.suspicious import Suspicious
+from flitsr.cutoff_points import cutoff_points
 
 #<------------------ Outdated methods ----------------------->
 
@@ -273,8 +273,16 @@ def output(sort, details, groups, weff=None, top1=None, perc_at_n=False,
         if (perc_at_n):
             bumps = percent_at_n.getBumps(faults, sort, groups,
                     collapse=collapse)
-            form = ','.join(['{:.3f}']*len(bumps))
-            print("percentage at n:", form.format(*bumps), file=file)
+            if (perc_at_n == 1):
+                form = ','.join(['{:.3f}']*len(bumps))
+                print("percentage at n:", form.format(*bumps), file=file)
+            else:
+                auc = percent_at_n.auc_calc(percent_at_n.combine([(bumps[0],bumps[1:])]))
+                if (perc_at_n == 2):
+                    print("auc:", auc, file=file)
+                elif (perc_at_n == 3):
+                    optimal=percent_at_n.auc_calc([(0.0, 100.0)])
+                    print("pauc:", "{:.3f}".format(auc/optimal), file=file)
         if (prec_rec):
             for entry in prec_rec:
                 if (entry[0] == 'p'):
@@ -295,7 +303,7 @@ def main(argv):
     if (len(argv) < 2):
         print("Usage: flitsr <input file> [<metric>] [split] [method] [worst/best/resolve]"
                 +" [sbfl] [first/avg/med/last] [one_top1/all_top1/perc_top1]"
-                +" [perc@n] [precision/recall]@<x>"
+                +" [perc@n/auc/pauc] [precision/recall]@<x>"
                 +" [tiebrk/rndm/otie] [multi] [parallel[=bdm/msp]] [all] [basis[=<n>]]"
                 +" "+str(cutoffs))
         print()
@@ -309,7 +317,7 @@ def main(argv):
     weff = []
     top1 = []
     prec_rec = []
-    perc_at_n = False
+    perc_at_n = 0
     tiebrk = 3
     multi = 0
     all = False
@@ -376,7 +384,11 @@ def main(argv):
             elif (argv[i] == "size_top1"):
                 top1.append("size")
             elif (argv[i] == "perc@n"):
-                perc_at_n = True
+                perc_at_n = 1
+            elif (argv[i] == "auc"):
+                perc_at_n = 2
+            elif (argv[i] == "pauc"):
+                perc_at_n = 3
             elif ("precision@" in argv[i]):
                 n = argv[i].split("@")[1]
                 if (n == "b" or n == "f"):
@@ -419,18 +431,16 @@ def main(argv):
         multi = 1
     # If only a ranking is given, print out metrics and return
     if (ranking):
-        #from ranking import read_ranking
-        #sort,details,groups = read_ranking(d, method_level=method)
-        from ranking import read_flitsr_ranking
-        sort,details,groups = read_flitsr_ranking(d)
+        from flitsr.ranking import read_any_ranking
+        sort, details, groups = read_any_ranking(d, method_level=method)
         output(sort, details, groups, weff, top1, perc_at_n, prec_rec,collapse)
         return
     # Else, run the full process
     if (input_m):
-        from tcm_input import read_table
+        from flitsr.tcm_input import read_table
         d_p = d
     else:
-        from input import read_table
+        from flitsr.input import read_table
         d_p = d.split("/")[0] + ".txt"
     # Read the table in and setup parallel if needed
     table,counts,groups,details,test_map = read_table(d, split, method_level=method)
@@ -453,13 +463,13 @@ def main(argv):
                 if (m == 'parallel'):
                     tables,counts = parallel.parallel(d, table, test_map, counts, tiebrk, metric, parallell)
                     output(sort, details, groups, weff=["first","med","last"],
-                            perc_at_n=True,prec_rec=[('p', 1), ('p', 5), ('p', 10),
+                            perc_at_n=1,prec_rec=[('p', 1), ('p', 5), ('p', 10),
                             ('p', "f"), ('r', 1), ('r', 5), ('r', 10), ('r', "f")],
                             collapse=collapse, file=file)
                 else:
                     sort = run(table, counts, metric, i>=1, 3, (i==2)*2)
                     output(sort, details, groups, weff=["first", "avg", "med", "last"],
-                            perc_at_n=True,prec_rec=[('p', 1), ('p', 5), ('p', 10),
+                            perc_at_n=1,prec_rec=[('p', 1), ('p', 5), ('p', 10),
                             ('p', "f"), ('r', 1), ('r', 5), ('r', 10), ('r', "f")],
                             collapse=collapse, file=file)
                 file.close()
