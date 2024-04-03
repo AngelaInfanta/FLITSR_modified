@@ -337,7 +337,7 @@ class Suspicious():
             h = self.ep/(self.ep + self.ef)
         return h**(self.ep) * (1-h)**(self.ef)
 
-    def barinel(self):
+    def _barinel(self):
         if (self.nf == 0 or self.ep + self.ef == 0):
             return 0.0
         if (self.ep == 0):
