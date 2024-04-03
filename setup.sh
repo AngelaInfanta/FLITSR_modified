@@ -1,6 +1,6 @@
 #!/bin/bash
 # check if python is installed
-python --version &> /dev/null
+python3 --version &> /dev/null
 if [ $? -ne 0 ]; then
   echo "ERROR: python not installed. Please install python and rerun this script."
 fi
@@ -31,7 +31,7 @@ sed -i "${line_num}a export PYTHONPATH=\"\$FLITSR_HOME:\$PYTHONPATH\"" "$rcfile"
 sed -i "${line_num}a export FLITSR_HOME=\"$SCRIPT_DIR\"" "$rcfile"
 echo "$rcfile has been updated. Run 'source $rcfile' to update your session."
 # install numpy
-python -m venv "$FLITSR_HOME/.venv"
+python3 -m venv "$FLITSR_HOME/.venv"
 source "$FLITSR_HOME/.venv/bin/activate"
-pip install -r "$FLITSR_HOME/requirements.txt"
+pip3 install -r "$FLITSR_HOME/requirements.txt"
 deactivate

@@ -1,4 +1,5 @@
 #!/bin/bash
+source ~/.bashrc
 source "$FLITSR_HOME/.venv/bin/activate"
-python -m flitsr "$@"
+python3 -m flitsr "$@"
 deactivate

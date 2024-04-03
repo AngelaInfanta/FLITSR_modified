@@ -15,7 +15,7 @@ run_with_lock() {
   # this read waits until there is something to read
   read -u 3 -n 3 x && ((0==x)) || exit $x
   (
-   ( "$@"; )
+   (/home/angela/Desktop/FLITSR_v2/flitsr/.venv/bin/python3 -m flitsr "$@";)
   # push the return code of the command to the semaphore
   printf '%.3d' $? >&3
   )&
@@ -30,7 +30,7 @@ else
   dir_type=*/
   echo "gzoltar"
 fi
-metrics=$($FLITSR_HOME/.venv/bin/python -m flitsr.get_metric_names)
+metrics=$(/home/angela/Desktop/FLITSR_v2/flitsr/.venv/bin/python3 -m flitsr.get_metric_names)
 #metrics="barinel"
 
 for proj in *; do
@@ -42,10 +42,11 @@ for proj in *; do
     #if [ ! -f "results" ]; then
       if [ "$1" = "tcm" ]; then
         for file in *.txt; do
-          run_with_lock flitsr "$file" all;
+          run_with_lock $(/home/angela/Desktop/FLITSR_v2/flitsr/.venv/bin/python3 -m flitsr "$file" all;)
         done
       else
-        for file in */; do run_with_lock flitsr "${file%/}" all; done
+        for file in */; do run_with_lock $(/home/angela/Desktop/FLITSR_v2/flitsr/.venv/bin/python3 -m flitsr "${file%/}" all;) 
+        done
       fi
       wait
       for m in $metrics; do
